@@ -11,7 +11,7 @@ const boom = require('boom');
 const knex = require('../knex');
 const { camelizeKeys, decamelizeKeys } = require('humps');
 
-router.get('/books', (_req, res, next) => {
+router.get('/books', (req, res, next) => {
   knex('books')
     .orderBy('title')
     .then((rows) => {
