@@ -2,7 +2,7 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable('favorites', (table) => {
-    table.increments()
+    table.increments();
     table.integer('book_id')
       .notNullable()
       .references('id')

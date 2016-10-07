@@ -5,17 +5,17 @@ const bcrypt = require('bcrypt-as-promised');
 const jwt = require('jsonwebtoken');
 const express = require('express');
 const knex = require('../knex');
-const {camelizeKeys, decamelizeKeys} = require('humps');
+const { camelizeKeys } = require('humps');
 
 const router = express.Router();
 
 router.post('/token', (req, res, next) => {
   const { email, password } = req.body;
 
-  if(!email || !email.trim) {
+  if (!email || !email.trim) {
     return next(boom.create(400, 'Email must not be blank'));
   }
-  if(!password || !password.trim) {
+  if (!password || !password.trim) {
     return next(boom.create(400, 'Password must not be blank'));
   }
 
@@ -25,19 +25,19 @@ router.post('/token', (req, res, next) => {
     .where('email', email)
     .first()
     .then((row) => {
-      if(!row) {
+      if (!row) {
         throw boom.create(400, 'Bad email or password');
       }
 
       user = camelizeKeys(row);
 
-      return bcrypt.compare(password, user.hashedPassword)
+      return bcrypt.compare(password, user.hashedPassword);
     })
     .then(() => {
       delete user.hashedPassword;
 
-      const expiry = new Date(Date.now() + 1000 * 60 * 60 *3);
-      const token = jwt.sign({ userId: user.id}, process.env.JWT_SECRET, {
+      const expiry = new Date(Date.now() + 1000 * 60 * 60 * 3);
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
         expiresIn: '3h'
       });
 
@@ -57,17 +57,18 @@ router.post('/token', (req, res, next) => {
     });
 });
 
-router.get('/token', (req, res, next) => {
-  jwt.verify(req.cookies.token, process.env.JWT_SECRET, (err, decoded) => {
+router.get('/token', (req, res) => {
+  jwt.verify(req.cookies.token, process.env.JWT_SECRET, (err) => {
     if (err) {
       res.send(false);
-      return; 
+
+      return;
     }
     res.send(true);
   });
 });
 
-router.delete('/token', (req, res, next) => {
+router.delete('/token', (req, res) => {
   res.clearCookie('token');
   res.send(true);
 });

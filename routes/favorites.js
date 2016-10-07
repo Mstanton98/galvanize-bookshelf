@@ -38,7 +38,6 @@ router.get('/favorites', authorize, (req, res, next) => {
 });
 
 router.get('/favorites/:id', authorize, (req, res, next) => {
-
   knex('favorites')
     .innerJoin('books', 'books.id', 'favorites.book_id')
     .where('favorites.book_id', req.query.bookId)
@@ -46,7 +45,7 @@ router.get('/favorites/:id', authorize, (req, res, next) => {
     .then((rows) => {
       const favorites = camelizeKeys(rows);
 
-      if(favorites.length === 0) {
+      if (favorites.length === 0) {
         throw res.send(false);
       }
 
@@ -61,7 +60,7 @@ router.post('/favorites', authorize, (req, res, next) => {
   const { bookId } = req.body;
   const favorite = { bookId, userId: req.token.userId };
 
-  if(!bookId) {
+  if (!bookId) {
     return next(boom.create(400, 'Book id must not be blank'));
   }
 
