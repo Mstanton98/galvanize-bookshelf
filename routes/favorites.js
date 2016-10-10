@@ -85,7 +85,7 @@ router.delete('/favorites', authorize, (req, res, next) => {
     .first()
     .then((row) => {
       if (!row) {
-        throw boom.create(404, 'Not Found');
+        throw boom.create(404, 'Favorite not found');
       }
 
       favorites = camelizeKeys(row);

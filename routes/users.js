@@ -26,6 +26,14 @@ router.post('/users', (req, res, next) => {
     return next(boom.create(400, 'Password must be at least 8 characters long'));
   }
 
+  knex('users')
+    .where('email', email)
+    .then((row) => {
+      if (row.length) {
+        return next(boom.create(400, 'Email already exists'));
+      }
+    })
+
   bcrypt.hash(password, 12)
     .then((hashedPassword) => {
       const insertUser = { firstName, lastName, email, hashedPassword };
