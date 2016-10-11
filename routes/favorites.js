@@ -38,6 +38,10 @@ router.get('/favorites', authorize, (req, res, next) => {
 });
 
 router.get('/favorites/:id', authorize, (req, res, next) => {
+  const id = parseInt(req.query.bookId, 10);
+  if (Number.isNaN(id)) {
+    throw boom.create(400, 'Book ID must be an integer');
+  }
   knex('favorites')
     .innerJoin('books', 'books.id', 'favorites.book_id')
     .where('favorites.book_id', req.query.bookId)
