@@ -21,7 +21,7 @@ module.exports.post = {
       .label('Genre'),
     description: Joi.string()
       .min(0)
-      .requred()
+      .required()
       .trim()
       .label('Description'),
     cover_url: Joi.string()
