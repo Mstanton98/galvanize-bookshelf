@@ -62,11 +62,9 @@ router.post('/books', ev(validations.post), (req, res, next) => {
     });
 });
 
-router.patch('/books/:id', (req, res, next) => {
+router.patch('/books/:id', ev(validations.patch), (req, res, next) => {
   const id = parseInt(req.params.id, 10);
-  if (Number.isNaN(id)) {
-    throw boom.create(404, 'Not Found');
-  }
+  
   knex('books')
     .where('id', id)
     .first()
