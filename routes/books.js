@@ -8,6 +8,8 @@ const router = express.Router();
 const boom = require('boom');
 const knex = require('../knex');
 const { camelizeKeys, decamelizeKeys } = require('humps');
+const ev = require('express-validation');
+const validations = require('../validations/books');
 
 router.get('/books', (req, res, next) => {
   knex('books')
@@ -44,29 +46,8 @@ router.get('/books/:id', (req, res, next) => {
   });
 });
 
-router.post('/books', (req, res, next) => {
+router.post('/books', ev(validations.post), (req, res, next) => {
   const { title, author, genre, description, coverUrl } = req.body;
-
-  if (!title || !title.trim()) {
-    return next(boom.create(400, 'Title must not be blank'));
-  }
-
-  if (!author || !author.trim()) {
-    return next(boom.create(400, 'Author must not be blank'));
-  }
-
-  if (!genre || !genre.trim()) {
-    return next(boom.create(400, 'Genre must not be blank'));
-  }
-
-  if (!description || !description.trim()) {
-    return next(boom.create(400, 'Description must not be blank'));
-  }
-
-  if (!coverUrl || !coverUrl.trim || coverUrl.length === 0) {
-    return next(boom.create(400, 'Cover URL must not be blank'));
-  }
-
   const insertBook = { title, author, genre, description, coverUrl };
 
   knex('books')

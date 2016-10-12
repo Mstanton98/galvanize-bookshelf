@@ -5,6 +5,8 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const knex = require('../knex');
 const { camelizeKeys, decamelizeKeys } = require('humps');
+const ev = require('express-validation');
+const validations = require('../validations/favorites');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -60,13 +62,9 @@ router.get('/favorites/:id', authorize, (req, res, next) => {
     });
 });
 
-router.post('/favorites', authorize, (req, res, next) => {
+router.post('/favorites', authorize, ev(validations.post), (req, res, next) => {
   const { bookId } = req.body;
   const favorite = { bookId, userId: req.token.userId };
-
-  if (!bookId) {
-    return next(boom.create(400, 'Book id must not be blank'));
-  }
 
   knex('favorites')
     .insert(decamelizeKeys(favorite), '*')
